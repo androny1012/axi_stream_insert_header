@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Wed Aug  9 09:29:08 2023
+[*] Wed Aug  9 09:54:20 2023
 [*]
 [dumpfile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim/tb_axi_stream_insert_header.vcd"
-[dumpfile_mtime] "Wed Aug  9 09:28:53 2023"
-[dumpfile_size] 10621
+[dumpfile_mtime] "Wed Aug  9 09:53:11 2023"
+[dumpfile_size] 7720
 [savefile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim/tb_axi_stream_insert_header.gtkw"
 [timestart] 0
-[size] 1428 819
-[pos] -1 -1
-*-15.000000 75000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1908 999
+[pos] 66850 65617
+*-15.000000 139100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb_axi_stream_insert_header.
 [sst_width] 214
 [signals_width] 246
 [sst_expanded] 1
-[sst_vpaned_height] 229
+[sst_vpaned_height] 292
 @28
 tb_axi_stream_insert_header.u_axi_stream_insert_header.clk[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.rst_n[0]
@@ -47,6 +47,7 @@ tb_axi_stream_insert_header.u_axi_stream_insert_header.ready_out[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.last_out[0]
 @22
 tb_axi_stream_insert_header.u_axi_stream_insert_header.data_out[31:0]
+@28
 tb_axi_stream_insert_header.u_axi_stream_insert_header.keep_out[3:0]
 @200
 -
@@ -60,8 +61,14 @@ tb_axi_stream_insert_header.u_axi_stream_insert_header.insert_type[2:0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.insert_mask[31:0]
 @200
 -
-@25
+@28
+tb_axi_stream_insert_header.u_axi_stream_insert_header.res_out[0]
+@24
 tb_axi_stream_insert_header.u_axi_stream_insert_header.keep_in_count_ones[2:0]
+@28
+tb_axi_stream_insert_header.u_axi_stream_insert_header.current_state[1:0]
+@23
+tb_axi_stream_insert_header.u_axi_stream_insert_header.keep_out_last[3:0]
 @200
 -
 -

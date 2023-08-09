@@ -49,8 +49,8 @@ module axi_stream_insert_header #(
             next_state = WAIT_HEAD;
         else begin
             case (current_state)
-                WAIT_HEAD : next_state = valid_insert ? WAIT_LAST : WAIT_HEAD;
-                WAIT_LAST : next_state = last_in      ? WAIT_HEAD : WAIT_LAST;
+                WAIT_HEAD : next_state = valid_insert            ? WAIT_LAST : WAIT_HEAD;
+                WAIT_LAST : next_state = last_out                ? WAIT_HEAD : WAIT_LAST;
                 default   : next_state = WAIT_HEAD;
             endcase
         end
@@ -96,6 +96,7 @@ module axi_stream_insert_header #(
     reg                         valid_out_r;
     reg                         last_out_r;
     reg                         res_out;
+    reg [DATA_BYTE_WD-1 : 0]    keep_out_last;
 
     wire [DATA_WD-1:0] insert_mask;
     assign insert_mask = {DATA_WD{1'b1}} >> ((DATA_BYTE_WD - insert_type) << 3);
@@ -105,10 +106,17 @@ module axi_stream_insert_header #(
 
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
-            data_out_r  <= {DATA_WD{1'b0}};
-            keep_out_r  <= {DATA_BYTE_WD{1'b0}};
-            valid_out_r <= 1'b0;
-            last_out_r  <= 1'b0;
+            data_out_r    <= {DATA_WD{1'b0}};
+            keep_out_r    <= {DATA_BYTE_WD{1'b0}};
+            valid_out_r   <= 1'b0;
+            last_out_r    <= 1'b0;
+            res_out       <= 1'b0;
+            keep_out_last <= {DATA_BYTE_WD{1'b0}};
+        end else if(res_out) begin
+            valid_out_r <= 1'b1;
+            keep_out_r  <= {DATA_BYTE_WD{1'b1}} << keep_out_last;
+            data_out_r  <= data_cut << ((DATA_BYTE_WD - (DATA_BYTE_WD - keep_out_last)) << 3);
+            last_out_r  <= 1'b1;
             res_out     <= 1'b0;
         end else if(valid_insert && ready_insert) begin
             if(insert_type == DATA_BYTE_WD) begin
@@ -116,6 +124,7 @@ module axi_stream_insert_header #(
                 valid_out_r <= 1'b1;
                 keep_out_r  <= {DATA_BYTE_WD{1'b1}};
             end
+            last_out_r  <= 1'b0;
         end else if(valid_in && ready_in && last_in)begin
             valid_out_r <= 1'b1;
             if(insert_type == 0 || insert_type == DATA_BYTE_WD) begin
@@ -127,6 +136,7 @@ module axi_stream_insert_header #(
                 if((insert_type + keep_in_count_ones) > DATA_BYTE_WD) begin
                     keep_out_r  <= {DATA_BYTE_WD{1'b1}};
                     res_out <= 1'b1;
+                    keep_out_last <= DATA_BYTE_WD - (insert_type + keep_in_count_ones - DATA_BYTE_WD);
                 end else begin
                     keep_out_r  <= {DATA_BYTE_WD{1'b1}} << ((DATA_BYTE_WD - insert_type) + keep_in_count_ones);
                     last_out_r  <= 1'b1;
@@ -140,12 +150,6 @@ module axi_stream_insert_header #(
             end else begin   
                 data_out_r  <= (insert_mask & data_cut) << ((DATA_BYTE_WD - insert_type) << 3) | (~insert_mask & data_in) >> ((DATA_BYTE_WD - (DATA_BYTE_WD - insert_type)) << 3);
             end
-        end else if(res_out) begin
-            valid_out_r <= 1'b1;
-            keep_out_r  <= {DATA_BYTE_WD{1'b1}};
-            data_out_r  <= data_in;
-            last_out_r  <= 1'b1;
-            res_out     <= 1'b0;
         end else begin
             // data_out_r <= {DATA_WD{1'b0}};
             valid_out_r <= 1'b0;            
