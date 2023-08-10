@@ -1,0 +1,77 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Thu Aug 10 11:29:45 2023
+[*]
+[dumpfile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
+[dumpfile_mtime] "Thu Aug 10 11:29:28 2023"
+[dumpfile_size] 1090
+[savefile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
+[timestart] 0
+[size] 1908 999
+[pos] 171018 164430
+*-15.000000 130000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 214
+[signals_width] 190
+[sst_expanded] 1
+[sst_vpaned_height] 291
+@28
+axi_stream_insert_header.clk
+axi_stream_insert_header.rst
+@200
+-
+@28
+axi_stream_insert_header.s00_axis_tready
+axi_stream_insert_header.s00_axis_tvalid
+axi_stream_insert_header.s00_axis_tkeep[3:0]
+@22
+axi_stream_insert_header.s00_axis_tdata[31:0]
+@200
+-
+@28
+axi_stream_insert_header.s01_axis_tready
+axi_stream_insert_header.s01_axis_tvalid
+axi_stream_insert_header.s01_axis_tlast
+axi_stream_insert_header.s01_axis_tkeep[3:0]
+@22
+axi_stream_insert_header.s01_axis_tdata[31:0]
+@200
+-
+-
+@28
+axi_stream_insert_header.m_axis_tready
+axi_stream_insert_header.m_axis_tvalid
+axi_stream_insert_header.m_axis_tlast
+axi_stream_insert_header.m_axis_tkeep[3:0]
+@22
+axi_stream_insert_header.m_axis_tdata[31:0]
+@200
+-
+@25
+axi_stream_insert_header.insert_type[2:0]
+@200
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+[pattern_trace] 1
+[pattern_trace] 0
