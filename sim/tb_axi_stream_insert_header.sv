@@ -80,22 +80,22 @@ end
     .DATA_BYTE_WD (DATA_BYTE_WD))
     u_axi_stream_insert_header (
     .clk                     (clk),
-    .rst_n                   (rst_n),
-    .valid_in                (valid_in),
-    .data_in                 (data_in          [DATA_WD-1 : 0]),
-    .keep_in                 (keep_in          [DATA_BYTE_WD-1 : 0]),
-    .last_in                 (last_in),
-    .ready_out               (ready_out),
-    .valid_insert            (valid_insert),
-    .header_insert        	 (data_insert      [DATA_WD-1 : 0]),
-    .keep_insert             (keep_insert      [DATA_BYTE_WD-1 : 0]),
+    .rst                     (!rst_n),
+    .s01_axis_tvalid                (valid_in),
+    .s01_axis_tdata                 (data_in          [DATA_WD-1 : 0]),
+    .s01_axis_tkeep                 (keep_in          [DATA_BYTE_WD-1 : 0]),
+    .s01_axis_tlast                 (last_in),
+    .m_axis_tready               (ready_out),
+    .s00_axis_tvalid            (valid_insert),
+    .s00_axis_tdata        	 (data_insert      [DATA_WD-1 : 0]),
+    .s00_axis_tkeep             (keep_insert      [DATA_BYTE_WD-1 : 0]),
     
-    .ready_in                (ready_in),
-    .valid_out               (valid_out),
-    .data_out                (data_out         [DATA_WD-1 : 0]),
-    .keep_out                (keep_out         [DATA_BYTE_WD-1 : 0]),
-    .last_out                (last_out),
-    .ready_insert            (ready_insert)
+    .s01_axis_tready                (ready_in),
+    .m_axis_tvalid               (valid_out),
+    .m_axis_tdata                (data_out         [DATA_WD-1 : 0]),
+    .m_axis_tkeep                (keep_out         [DATA_BYTE_WD-1 : 0]),
+    .m_axis_tlast                (last_out),
+    .s00_axis_tready            (ready_insert)
     );
     
 
@@ -103,8 +103,10 @@ end
 always @(posedge clk or negedge rst_n)begin
 		if(!rst_n)
 				valid_insert		<=		0			;	
-		else
+		else begin
 				valid_insert		<=	{$random(seed)}%2 ;
+				ready_out		<=	{$random(seed)}%2 ;
+		end
 end
   
 // 计数器cnt
@@ -112,12 +114,13 @@ reg 	[3:0]cnt		=	0							;
 always @(posedge clk or negedge rst_n)begin
 		if(!rst_n)
 				cnt				<=		0				;
+		else if(cnt == (tb_datain_depth+1)) 
+				cnt				<=	0					;
 		else if(ready_in && cnt == 0)
 				cnt				<=	cnt + 1				;
 		else if(ready_in && valid_in)
 				cnt				<=	cnt + 1				;
-		else if(cnt == (tb_datain_depth+1)) 
-				cnt				<=	0					;
+
 		else 
 				cnt 			<=	cnt					;
 

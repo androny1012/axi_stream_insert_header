@@ -21,6 +21,7 @@
 TOPLEVEL_LANG = verilog
 
 SIM ?= icarus
+# SIM ?= verilator
 WAVES ?= 1
 
 COCOTB_HDL_TIMEUNIT = 1ns
@@ -31,6 +32,8 @@ TOPLEVEL = $(DUT)
 MODULE   = test_$(DUT)
 # VERILOG_SOURCES += ./rtl/$(DUT).v
 VERILOG_SOURCES += ../rtl/*.v
+
+export PYTHONPATH := $(PWD)/../model:$(PYTHONPATH)
 
 ifeq ($(SIM), icarus)
 	PLUSARGS += -fst
