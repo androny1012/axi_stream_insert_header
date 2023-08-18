@@ -38,8 +38,18 @@ module DataInserter #(
     reg                                 send_header; // 用这个信号和状态机有什么区别
     
     // buffer 在一次数据没传完，拆一半时用到
+    reg [DATA_WD-1 : 0]                 res_buffer;
+
     reg [DATA_WD-1 : 0]                 data_buffer;
-    reg                                 data_valid;
+    reg [$clog2(DATA_BYTE_WD+1)-1:0]    data_buffer_cnt;
+    reg                                 data_buffer_last;
+    reg                                 data_buffer_valid;
+
+    wire                                data_valid;
+    wire [$clog2(DATA_BYTE_WD+1)-1:0]   data_cnt;
+    wire [$clog2(DATA_BYTE_WD+1)-1:0]   data_last;
+    wire [DATA_WD-1 : 0]                data_data;
+
     reg [DATA_WD-1 : 0]                 header_buffer;
     reg [$clog2(DATA_BYTE_WD+1)-1:0]    header_buffer_cnt;
     reg                                 header_buffer_valid;
@@ -74,12 +84,8 @@ module DataInserter #(
 
     // assign s00_axis_tkeep_count_ones = ones_counter(s00_axis_tkeep);
     // assign s01_axis_tkeep_count_ones = ones_counter(s01_axis_tkeep);
-
-    assign header_data  = header_buffer_valid ? header_buffer       : s00_axis_tdata;
-    assign header_cnt   = header_buffer_valid ? header_buffer_cnt   : s00_axis_tkeep_count_ones;
-    assign header_valid = header_buffer_valid ? header_buffer_valid : s00_axis_tvalid;
     
-    // 和状态机有什么区别
+    // 使用信号 send_header 和状态机有什么区别
     always @(posedge clk) begin
         if(rst) begin
             send_header <= 1'b1;
@@ -93,39 +99,55 @@ module DataInserter #(
     end
 
     // 后级反压，需要发header，buffer中为空
-    assign s00_axis_tready = m_axis_tready &&   send_header && !header_buffer_valid;
+    assign s00_axis_tready = send_header && !header_buffer_valid;
     assign s01_axis_tready = m_axis_tready && (!send_header || ((header_cnt < DATA_BYTE_WD) && header_valid && send_header));
 
     // 应该在每次传输header记录下来，并在单次传输过程中保持
     always @(posedge clk) begin
         if(rst) begin
-            header_buffer_cnt <=  'b0;
-        end else if(s00_axis_tvalid && s00_axis_tready) begin
-            header_buffer_cnt <= s00_axis_tkeep_count_ones;
-        end
-    end
-
-    always @(posedge clk) begin
-        if(rst) begin
-            header_buffer <= {DATA_WD{1'b0}};
+            header_buffer       <= {DATA_WD{1'b0}};
+            header_buffer_cnt   <=  'b0;
             header_buffer_valid <= 1'b0;
         end else if(m_axis_tvalid && m_axis_tready && (header_buffer_valid || m_axis_tlast)) begin  // something else?
             header_buffer_valid <= 1'b0;
         end else if(s00_axis_tready) begin
             header_buffer       <= s00_axis_tdata;
+            header_buffer_cnt   <= s00_axis_tkeep_count_ones;
             header_buffer_valid <= s00_axis_tvalid;
         end
     end
 
+    assign header_data  = header_buffer_valid ? header_buffer       : s00_axis_tdata;
+    assign header_cnt   = header_buffer_valid ? header_buffer_cnt   : s00_axis_tkeep_count_ones;
+    assign header_valid = header_buffer_valid ? header_buffer_valid : s00_axis_tvalid;
+
     always @(posedge clk) begin
         if(rst) begin
-            data_buffer <= {DATA_WD{1'b0}};
-            data_valid  <= 1'b0;
-        // end else if(m_axis_tvalid && m_axis_tready && !header_valid && data_valid) begin  // something else?
-        //     data_valid  <= 1'b0;
+            data_buffer       <= {DATA_WD{1'b0}};
+            data_buffer_cnt   <=  'b0;
+            data_buffer_last  <= 1'b0;
+            data_buffer_valid <= 1'b0;
+        end else if(m_axis_tvalid && m_axis_tready) begin
+            data_buffer_valid <= 1'b0;
         end else if(s01_axis_tready) begin
-            data_buffer <= s01_axis_tdata;
-            data_valid  <= s01_axis_tvalid;
+            data_buffer       <= s01_axis_tdata;
+            data_buffer_cnt   <= s01_axis_tkeep_count_ones;
+            data_buffer_last  <= s01_axis_tlast;
+            data_buffer_valid <= s01_axis_tvalid;
+        end
+    end
+
+    assign data_data  = data_buffer_valid ? data_buffer       : s01_axis_tdata;
+    assign data_cnt   = data_buffer_valid ? data_buffer_cnt   : s01_axis_tkeep_count_ones;
+    assign data_last  = data_buffer_valid ? data_buffer_last  : s01_axis_tlast;
+    assign data_valid = data_buffer_valid ? data_buffer_valid : s01_axis_tvalid;
+
+    // 每次拼接时剩下的data
+    always @(posedge clk) begin
+        if(rst) begin
+            res_buffer <= {DATA_WD{1'b0}};
+        end else if(s01_axis_tready) begin
+            res_buffer <= s01_axis_tdata;
         end
     end
 
@@ -165,18 +187,18 @@ module DataInserter #(
             m_axis_tvalid_r = 1'b1;
             m_axis_tlast_r  = 1'b1;
         end else if(send_header) begin
-            if(s00_axis_tkeep_count_ones == DATA_BYTE_WD) begin
+            if(header_cnt == DATA_BYTE_WD) begin
                 m_axis_tdata_r  = header_data;
                 m_axis_tkeep_r  = s00_axis_tkeep;
-                m_axis_tvalid_r = s00_axis_tvalid;
+                m_axis_tvalid_r = header_valid;
                 m_axis_tlast_r  = 1'b0;
-            end else if(s01_axis_tlast && ((s00_axis_tkeep_count_ones + s01_axis_tkeep_count_ones) <= DATA_BYTE_WD)) begin
-                m_axis_tdata_r  = {header_data, s01_axis_tdata} >> ((DATA_BYTE_WD - (DATA_BYTE_WD - s00_axis_tkeep_count_ones)) << 3);
-                m_axis_tkeep_r  = {DATA_BYTE_WD{1'b1}} << (DATA_BYTE_WD - (s01_axis_tkeep_count_ones + s00_axis_tkeep_count_ones));
+            end else if(s01_axis_tlast && ((header_cnt + s01_axis_tkeep_count_ones) <= DATA_BYTE_WD)) begin
+                m_axis_tdata_r  = {header_data, s01_axis_tdata} >> ((DATA_BYTE_WD - (DATA_BYTE_WD - header_cnt)) << 3);
+                m_axis_tkeep_r  = {DATA_BYTE_WD{1'b1}} << (DATA_BYTE_WD - (s01_axis_tkeep_count_ones + header_cnt));
                 m_axis_tvalid_r = header_valid && s01_axis_tvalid;
                 m_axis_tlast_r  = 1'b1;
             end else begin
-                m_axis_tdata_r  = {header_data, s01_axis_tdata} >> ((DATA_BYTE_WD - (DATA_BYTE_WD - s00_axis_tkeep_count_ones)) << 3);
+                m_axis_tdata_r  = {header_data, s01_axis_tdata} >> ((DATA_BYTE_WD - (DATA_BYTE_WD - header_cnt)) << 3);
                 m_axis_tkeep_r  = {DATA_BYTE_WD{1'b1}};
                 m_axis_tvalid_r = header_valid && s01_axis_tvalid;
                 m_axis_tlast_r  = 1'b0;
@@ -188,7 +210,7 @@ module DataInserter #(
                 m_axis_tkeep_r  = s01_axis_tkeep;   
                 m_axis_tlast_r  = s01_axis_tlast;
             end else if(s01_axis_tready) begin 
-                m_axis_tdata_r  = {data_buffer, s01_axis_tdata} >> ((DATA_BYTE_WD - (DATA_BYTE_WD - header_buffer_cnt)) << 3);
+                m_axis_tdata_r  = {res_buffer, s01_axis_tdata} >> ((DATA_BYTE_WD - (DATA_BYTE_WD - header_buffer_cnt)) << 3);
                 if(s01_axis_tlast && ((header_buffer_cnt + s01_axis_tkeep_count_ones) <= DATA_BYTE_WD)) begin
                     m_axis_tkeep_r  = {DATA_BYTE_WD{1'b1}} << (DATA_BYTE_WD - (s01_axis_tkeep_count_ones + header_buffer_cnt));
                     m_axis_tlast_r  = 1'b1;

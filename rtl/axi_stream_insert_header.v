@@ -30,10 +30,29 @@ module axi_stream_insert_header #(
     input                        m_axis_tready
 );
 
+    wire                        valid_in;
+    wire [DATA_WD-1 : 0]        data_in;
+    wire [DATA_BYTE_WD-1 : 0]   keep_in;
+    wire                        last_in;
+    wire                        ready_in;
+
+    BypassFIFO_wrap#(
+        .DEPTH       (1                                             ),  // 0 or 1 
+        .DATA_WD     (DATA_WD + DATA_BYTE_WD + 1                    )
+    ) u_buffer(
+        .clk         (clk                                           ),
+        .rst_n       (!rst                                          ),
+        .valid_pre_i (s01_axis_tvalid                               ),
+        .data_pre_i  ({s01_axis_tdata,s01_axis_tkeep,s01_axis_tlast}),
+        .ready_pre_o (s01_axis_tready                               ),
+        .valid_post_o(valid_in                                      ),
+        .data_post_o ({data_in,keep_in,last_in}                     ),
+        .ready_post_i(ready_in                                      )
+    );
 
     DataInserter #(
-        .DATA_WD     (DATA_WD),
-        .DATA_BYTE_WD(DATA_BYTE_WD)
+        .DATA_WD        (DATA_WD        ),
+        .DATA_BYTE_WD   (DATA_BYTE_WD   )
     ) u_DI(
         .clk            (clk            ),
         .rst            (rst            ),
@@ -41,11 +60,11 @@ module axi_stream_insert_header #(
         .s00_axis_tdata (s00_axis_tdata ),
         .s00_axis_tkeep (s00_axis_tkeep ),
         .s00_axis_tready(s00_axis_tready),
-        .s01_axis_tvalid(s01_axis_tvalid),
-        .s01_axis_tdata (s01_axis_tdata ),
-        .s01_axis_tkeep (s01_axis_tkeep ),
-        .s01_axis_tlast (s01_axis_tlast ),
-        .s01_axis_tready(s01_axis_tready),
+        .s01_axis_tvalid(valid_in       ),
+        .s01_axis_tdata (data_in        ),
+        .s01_axis_tkeep (keep_in        ),
+        .s01_axis_tlast (last_in        ),
+        .s01_axis_tready(ready_in       ),
         .m_axis_tvalid  (m_axis_tvalid  ),
         .m_axis_tdata   (m_axis_tdata   ),
         .m_axis_tkeep   (m_axis_tkeep   ),

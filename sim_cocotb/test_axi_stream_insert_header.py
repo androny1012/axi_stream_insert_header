@@ -54,7 +54,8 @@ class TB(object):
 
 @cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
-
+    random.seed(7)
+    
     tb = TB(dut)
     byte_lanes = tb.source[0].byte_lanes # 位宽字节数
     await tb.reset()
@@ -92,6 +93,7 @@ async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
 
 @cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_random_test(dut, idle_inserter=None, backpressure_inserter=None):
+    random.seed(7)
 
     tb = TB(dut)
     byte_lanes = tb.source[0].byte_lanes # 位宽字节数
@@ -126,6 +128,7 @@ def cycle_pause():
     # return itertools.cycle([1, 1, 1, 0])
     return itertools.cycle(random_int_list(0,1,100))
 
+
 # 自增测试,遍历所有head和data的长度组合情况
 factory = TestFactory(run_incr_test)
 factory.add_option("idle_inserter", [None, cycle_pause])
@@ -137,7 +140,3 @@ factory = TestFactory(run_random_test)
 factory.add_option("idle_inserter", [None, cycle_pause])
 factory.add_option("backpressure_inserter", [None, cycle_pause])
 factory.generate_tests()
-
-
-
-
