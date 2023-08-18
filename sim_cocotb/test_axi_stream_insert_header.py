@@ -52,7 +52,7 @@ class TB(object):
         await RisingEdge(self.dut.clk)
         await RisingEdge(self.dut.clk)
 
-
+@cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
 
     tb = TB(dut)
@@ -90,6 +90,7 @@ async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
 
+@cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_random_test(dut, idle_inserter=None, backpressure_inserter=None):
 
     tb = TB(dut)

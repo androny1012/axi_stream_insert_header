@@ -1,20 +1,22 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Aug 14 12:12:05 2023
+[*] Fri Aug 18 00:36:03 2023
 [*]
 [dumpfile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim/tb_axi_stream_insert_header.vcd"
-[dumpfile_mtime] "Mon Aug 14 12:11:57 2023"
-[dumpfile_size] 9523
+[dumpfile_mtime] "Fri Aug 18 00:34:44 2023"
+[dumpfile_size] 10502
 [savefile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim/tb_axi_stream_insert_header.gtkw"
-[timestart] 692700
-[size] 1908 999
-[pos] 148127 131328
-*-15.000000 259400 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 0
+[size] 1428 819
+[pos] 148159 131360
+*-14.000000 30000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb_axi_stream_insert_header.
+[treeopen] tb_axi_stream_insert_header.u_axi_stream_insert_header.
+[treeopen] tb_axi_stream_insert_header.u_axi_stream_insert_header.u_DI.
 [sst_width] 214
 [signals_width] 270
 [sst_expanded] 1
-[sst_vpaned_height] 296
+[sst_vpaned_height] 232
 @28
 tb_axi_stream_insert_header.u_axi_stream_insert_header.clk[0]
 tb_axi_stream_insert_header.rst_n[0]
@@ -24,6 +26,7 @@ tb_axi_stream_insert_header.rst_n[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s00_axis_tready[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s00_axis_tvalid[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s00_axis_tkeep[3:0]
+tb_axi_stream_insert_header.u_axi_stream_insert_header.u_DI.s00_axis_tkeep_count_ones[2:0]
 @22
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s00_axis_tdata[31:0]
 @200
@@ -34,6 +37,7 @@ tb_axi_stream_insert_header.u_axi_stream_insert_header.s01_axis_tready[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s01_axis_tvalid[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s01_axis_tlast[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s01_axis_tkeep[3:0]
+tb_axi_stream_insert_header.u_axi_stream_insert_header.u_DI.s01_axis_tkeep_count_ones[2:0]
 @22
 tb_axi_stream_insert_header.u_axi_stream_insert_header.s01_axis_tdata[31:0]
 @200
@@ -45,20 +49,18 @@ tb_axi_stream_insert_header.u_axi_stream_insert_header.m_axis_tready[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.m_axis_tvalid[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.m_axis_tlast[0]
 tb_axi_stream_insert_header.u_axi_stream_insert_header.m_axis_tkeep[3:0]
-tb_axi_stream_insert_header.u_axi_stream_insert_header.m_axis_tkeep_r[3:0]
 @22
 tb_axi_stream_insert_header.u_axi_stream_insert_header.m_axis_tdata[31:0]
-@28
-tb_axi_stream_insert_header.u_axi_stream_insert_header.res_out[0]
 @200
 -
+@23
+tb_axi_stream_insert_header.u_axi_stream_insert_header.u_DI.header_valid[31:0]
+@28
+tb_axi_stream_insert_header.u_axi_stream_insert_header.u_DI.send_header[0]
 @22
 tb_axi_stream_insert_header.cnt[3:0]
 @200
 -
-@28
-tb_axi_stream_insert_header.u_axi_stream_insert_header.current_state[1:0]
-@200
 -
 -
 -
