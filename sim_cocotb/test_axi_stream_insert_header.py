@@ -114,7 +114,7 @@ async def run_random_test(dut, idle_inserter=None, backpressure_inserter=None):
         body_byte = bytearray(body_data)
         body_frame = AxiStreamFrame(tdata = body_byte, tkeep = body_tkeep)
         await tb.source[1].send(body_frame)
-
+        # 收应该是另一个线程
         out_frame = AxiStreamFrame(ref_byte) 
         rx_frame = await tb.sink.recv()
         assert rx_frame.tdata == out_frame.tdata
@@ -135,7 +135,7 @@ factory.add_option("idle_inserter", [None, cycle_pause])
 factory.add_option("backpressure_inserter", [None, cycle_pause])
 factory.generate_tests()
 
-# 随机测试
+# # 随机测试
 factory = TestFactory(run_random_test)
 factory.add_option("idle_inserter", [None, cycle_pause])
 factory.add_option("backpressure_inserter", [None, cycle_pause])

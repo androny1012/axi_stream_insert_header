@@ -14,7 +14,8 @@ module BypassFIFO_wrap #(
     input                       ready_post_i    //from post-stage
 );
 
-    wire [DEPTH:0]      valids, readys;
+    wire [DEPTH:0]      valids; 
+    wire [DEPTH:0]      readys;
     wire [DATA_WD-1:0]  data [DEPTH: 0];
 
     assign valids[0]        = valid_pre_i;

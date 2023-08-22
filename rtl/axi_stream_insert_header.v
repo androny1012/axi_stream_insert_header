@@ -37,7 +37,7 @@ module axi_stream_insert_header #(
     wire                        ready_in;
 
     BypassFIFO_wrap#(
-        .DEPTH       (1                                             ),  // 0 or 1 
+        .DEPTH       (0                                             ),  // 0 or 1 
         .DATA_WD     (DATA_WD + DATA_BYTE_WD + 1                    )
     ) u_buffer(
         .clk         (clk                                           ),
@@ -50,7 +50,7 @@ module axi_stream_insert_header #(
         .ready_post_i(ready_in                                      )
     );
 
-    DataInserter #(
+    DataInserterFlow #(
         .DATA_WD        (DATA_WD        ),
         .DATA_BYTE_WD   (DATA_BYTE_WD   )
     ) u_DI(

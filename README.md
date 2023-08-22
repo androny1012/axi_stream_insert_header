@@ -21,5 +21,38 @@
 
     去掉的状态机的显式实现，给header加入了buffer
 
+
+    HEAD_KEEP
+        1111
+        0111
+        0011
+        0001
+    DATA_KEEP(last)
+        1111
+        1110
+        1100
+        1000
+    
+    HEAD_KEEP 1111
+    DATA_KEEP 1111 1110
+
+    HEAD_KEEP 0111
+    DATA_KEEP 1111 1110   tail
+
+    HEAD_KEEP 0011
+    DATA_KEEP 1111 1110   tail
+
+    HEAD_KEEP 0001
+    DATA_KEEP 1111 1110 
+
+    控制通路和数据通路分开
+
+    数据流、带点状态机的思想，管理好状态变量
+    if else if 条件互斥？
+
+    综合一下三种电路
+    加法
+    case
+    for循环移位
 ## 仿真
     model中实现了此模块的软件参考模型，将生成的序列进行了参数化，方便输入能够遍历各种情况，实现难度在于需要和AxiStreamFrame所需的格式对齐(补零)，并考虑硬件的对齐情况，需要完成大小端的转换，包括keep信号的生成

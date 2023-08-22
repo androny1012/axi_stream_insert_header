@@ -62,6 +62,7 @@ module DataInserter #(
     reg [$clog2(DATA_BYTE_WD+1)-1:0]    s01_axis_tkeep_count_ones;
     integer idx;
 
+    // 针对此特定场景连续的1
     always @* begin
         s00_axis_tkeep_count_ones = {DATA_BYTE_WD{1'b0}};  
         s01_axis_tkeep_count_ones = {DATA_BYTE_WD{1'b0}};  
@@ -74,7 +75,7 @@ module DataInserter #(
     // wire [$clog2(DATA_BYTE_WD+1)-1:0] s00_axis_tkeep_count_ones;
     // wire [$clog2(DATA_BYTE_WD+1)-1:0] s01_axis_tkeep_count_ones;
 
-    // function [$clog2(DATA_BYTE_WD+1)-1:0] ones_counter;
+    // function wire [$clog2(DATA_BYTE_WD+1)-1:0] ones_counter;
     //     integer idx;
     //     input [DATA_BYTE_WD-1:0] s_axis_tkeep;
     //     for( idx = 0; idx < DATA_BYTE_WD; idx = idx + 1) begin
@@ -86,6 +87,8 @@ module DataInserter #(
     // assign s01_axis_tkeep_count_ones = ones_counter(s01_axis_tkeep);
     
     // 使用信号 send_header 和状态机有什么区别
+    // 状态机对于状态 组合逻辑很大，状态多的时候，性能差
+    // 状态机 刚性  不灵活，我们追求elastic 握手 
     always @(posedge clk) begin
         if(rst) begin
             send_header <= 1'b1;
@@ -99,10 +102,12 @@ module DataInserter #(
     end
 
     // 后级反压，需要发header，buffer中为空
-    assign s00_axis_tready = send_header && !header_buffer_valid;
-    assign s01_axis_tready = m_axis_tready && (!send_header || ((header_cnt < DATA_BYTE_WD) && header_valid && send_header));
+    assign s00_axis_tready = send_header && !header_buffer_valid; // send_header_reg
+    assign s01_axis_tready = m_axis_tready && (!send_header || ((header_cnt < DATA_BYTE_WD) && header_valid && send_header)); //(header_cnt < DATA_BYTE_WD) opt
+    // 加>比>选>门
 
     // 应该在每次传输header记录下来，并在单次传输过程中保持
+    // why bypass
     always @(posedge clk) begin
         if(rst) begin
             header_buffer       <= {DATA_WD{1'b0}};
@@ -171,6 +176,9 @@ module DataInserter #(
         end
     end
 
+    // 状态机？想到一个条件加一个
+    // 先考虑握手成功后的数据怎么处理
+    // 中间情况怎么处理，边界情况怎么处理
     always @(*) begin
         m_axis_tdata_r  = {DATA_WD{1'b0}};
         m_axis_tkeep_r  = {DATA_BYTE_WD{1'b0}};
