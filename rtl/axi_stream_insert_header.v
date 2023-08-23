@@ -50,7 +50,7 @@ module axi_stream_insert_header #(
         .ready_post_i(ready_in                                      )
     );
 
-    DataInserterFlow #(
+    DataInserterStream #(
         .DATA_WD        (DATA_WD        ),
         .DATA_BYTE_WD   (DATA_BYTE_WD   )
     ) u_DI(
