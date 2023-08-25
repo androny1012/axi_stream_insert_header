@@ -195,9 +195,9 @@ module DataInserterStream #(
     // header : buffer 为空 或者 本次传输结束
     assign s00_axis_tready  = !header_valid_reg | (m_axis_tready && m_axis_tlast);
 
-    // data   : buffer 为空 或者 传输了一个本次传输的数据 !last_sv 是防止下次传输的数据被送入
+    // data   : buffer 为空 或者 最后一排 或者 当拍将要输出本次传输的DATA时  !last_sv 是防止下次传输的数据被送入
     // assign s01_axis_tready  = !data_valid_reg   | (m_axis_tready && m_axis_tlast); 
-    assign s01_axis_tready  = !data_valid_reg   | (m_axis_tready && m_axis_tlast) | (m_axis_tready && m_axis_tvalid && !last_sv) ;
+    assign s01_axis_tready  = !data_valid_reg  | (m_axis_tready && m_axis_tlast) | (m_axis_tready && m_axis_tvalid && !last_sv) ;
     // data_valid_reg 中有数据并不代表一定会输出，可能输出的是head?可能是下次传输提前进buffer的数据，不能输出
 
     assign m_axis_tdata  = concat_data_shift[2*DATA_WD-1      :      DATA_WD];

@@ -4,3 +4,5 @@
 *.vvp
 *.fst
 *.xml
+build/
+generated/

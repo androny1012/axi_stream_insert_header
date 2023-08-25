@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Aug 25 02:46:03 2023
+[*] Fri Aug 25 05:12:12 2023
 [*]
 [dumpfile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
-[dumpfile_mtime] "Fri Aug 25 02:29:16 2023"
-[dumpfile_size] 28039
+[dumpfile_mtime] "Fri Aug 25 05:03:13 2023"
+[dumpfile_size] 104167
 [savefile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
-[timestart] 5043200
+[timestart] 78200
 [size] 1428 819
-[pos] 426108 391569
-*-14.666153 5103500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 458844 424485
+*-14.666153 114300 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] axi_stream_insert_header.
 [sst_width] 264
 [signals_width] 270
@@ -44,9 +44,7 @@ axi_stream_insert_header.u_DI.s01_axis_tdata[31:0]
 @28
 axi_stream_insert_header.u_DI.m_axis_tready
 axi_stream_insert_header.u_DI.m_axis_tvalid
-@29
 axi_stream_insert_header.u_DI.m_axis_tlast
-@28
 axi_stream_insert_header.u_DI.m_axis_tkeep[3:0]
 @22
 axi_stream_insert_header.u_DI.m_axis_tdata[31:0]
@@ -54,6 +52,7 @@ axi_stream_insert_header.u_DI.m_axis_tdata[31:0]
 -
 @28
 axi_stream_insert_header.u_DI.last_sv
+@29
 axi_stream_insert_header.u_DI.m_axis_tready
 @200
 -

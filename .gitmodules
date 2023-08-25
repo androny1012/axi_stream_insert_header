@@ -1,0 +1,3 @@
+[submodule "bsv/lib/blue-wrapper"]
+	path = bsv/lib/blue-wrapper
+	url = https://github.com/wengwz/blue-wrapper

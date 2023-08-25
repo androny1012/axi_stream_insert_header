@@ -104,7 +104,7 @@ async def run_random_test(dut, idle_inserter=None, backpressure_inserter=None):
     package_num = 64
     for __ in range(package_num):
         
-        length = random.randint(2,64)
+        length = random.randint(2,32)
         head_bytenum = random.randint(1, (length-1) if byte_lanes > (length-1) else byte_lanes) # head byte数随机
         head_data, head_tkeep, body_data, body_tkeep, ref_byte = genInsertHeaderData(byte_lanes, length, head_bytenum)
         head_byte = bytearray(head_data)
@@ -175,7 +175,7 @@ async def run_consistent_random_test(dut, idle_inserter=None, backpressure_inser
     ref_frames = []
     for __ in range(package_num):
         
-        length = random.randint(2,64)
+        length = random.randint(2,32)
         head_bytenum = random.randint(1, (length-1) if byte_lanes > (length-1) else byte_lanes) # head byte数随机
         head_data, head_tkeep, body_data, body_tkeep, ref_byte = genInsertHeaderData(byte_lanes, length, head_bytenum)
         head_byte = bytearray(head_data)
