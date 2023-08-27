@@ -52,28 +52,28 @@ module DataInserterStream #(
 
     integer idx;
     
-    reg send_header;
-    reg last_sv;
+    reg send_header_reg;
+    reg last_sv_reg;
     reg tlast_gen;
-    reg tail_valid;
+    reg tail_valid_reg;
 
     // 记录本次传输是否已经发过header，为1是还没发，防止重复发header
     always @(posedge clk) begin
         if(rst) begin
-            send_header <= 1'b1;
+            send_header_reg <= 1'b1;
         end else if(m_axis_tvalid && m_axis_tready) begin
-            send_header <= m_axis_tlast;
+            send_header_reg <= m_axis_tlast;
         end
     end
 
     // 记录收到输入tlast 和输出tlast的时间，在此期间，不要再发buffer中的一个数据
     always @(posedge clk) begin
         if(rst) begin
-            last_sv <= 1'b0;
+            last_sv_reg <= 1'b0;
         end else if(s01_axis_tvalid && s01_axis_tready && s01_axis_tlast) begin
-            last_sv <= 1'b1;
+            last_sv_reg <= 1'b1;
         end else if(  m_axis_tvalid &&   m_axis_tready &&   m_axis_tlast) begin
-            last_sv <= 1'b0;
+            last_sv_reg <= 1'b0;
         end
     end
 
@@ -92,10 +92,7 @@ module DataInserterStream #(
         end
     end
 
-    // 要保证清空的逻辑是已经用过了buffer中的数据
-    // 握手必须清空buffer吗？如果发的header是1111呢？ 先不考虑这个情况？
-    // 清空buffer的条件应该是data reg送入了 res buffer中
-    // 而res buffer取data reg的条件就是 输出握手，前提是送出去的不是全1
+    // 清空buffer的条件应该输出握手,但不要清空提前进来的下次传输的数据
     always @(posedge clk) begin
         if(rst) begin
             data_valid_reg <= 1'b0;
@@ -109,7 +106,7 @@ module DataInserterStream #(
             data_last_reg  <= s01_axis_tlast;
         end else if(m_axis_tready && m_axis_tvalid) begin
             // 只在传输本次数据时清空buffer,防止清掉提前进来的数据
-            if(!last_sv)
+            if(!last_sv_reg)
                 data_valid_reg <= 1'b0;
         end 
     end
@@ -121,7 +118,7 @@ module DataInserterStream #(
         end else begin
             concat_data = 'b0;
             concat_keep = 'b0;
-            if(header_valid_reg && send_header) begin // 发过header后就不要再送入输出端口
+            if(header_valid_reg && send_header_reg) begin // 发过header后就不要再送入输出端口
                 concat_data[2*DATA_WD-1      : DATA_WD]      = header_data_reg;
                 concat_keep[2*DATA_BYTE_WD-1 : DATA_BYTE_WD] = header_keep_reg;
             end
@@ -129,7 +126,7 @@ module DataInserterStream #(
                 concat_data[2*DATA_WD-1      : DATA_WD]      = res_data_shift;
                 concat_keep[2*DATA_BYTE_WD-1 : DATA_BYTE_WD] = res_keep_shift;            
             end
-            if(data_valid_reg && ((header_valid_reg && send_header) | !send_header) && !tail_valid) begin // 可以和head同时concat，但不能是下一次传输的数据
+            if(data_valid_reg && ((header_valid_reg && send_header_reg) | !send_header_reg) && !tail_valid_reg) begin // 可以和head同时concat，但不能是下一次传输的数据
                 concat_data[DATA_WD-1      : 0]              = data_data_reg;
                 concat_keep[DATA_BYTE_WD-1 : 0]              = data_keep_reg;
             end
@@ -172,20 +169,20 @@ module DataInserterStream #(
 
     always @(posedge clk) begin
         if(rst) begin
-            tail_valid <= 1'b0;
-        end else if(last_sv && m_axis_tready && header_valid_reg) begin // 收到了 head 且收到了最后一个data，且将要输出最后一拍的一部分数据，如果还有剩，就是小尾巴
-            tail_valid <= concat_keep_shift[DATA_BYTE_WD-1];
+            tail_valid_reg <= 1'b0;
+        end else if(last_sv_reg && m_axis_tready && header_valid_reg) begin // 收到了 head 且收到了最后一个data，且将要输出最后一拍的一部分数据，如果还有剩，就是小尾巴
+            tail_valid_reg <= concat_keep_shift[DATA_BYTE_WD-1];
         end else if(m_axis_tready && m_axis_tlast) begin
-            tail_valid <= 1'b0;
+            tail_valid_reg <= 1'b0;
         end
     end  
 
     always @(*) begin
         if(rst) begin
             tlast_gen = 1'b0;
-        end else if(last_sv && m_axis_tready && header_valid_reg) begin // 收到了 head 且收到了最后一个data，在输出数据的时候判断buffer中是否还有剩余的数据，无则就是最后一拍
+        end else if(last_sv_reg && m_axis_tready && header_valid_reg) begin // 收到了 head 且收到了最后一个data，在输出数据的时候判断buffer中是否还有剩余的数据，无则就是最后一拍
             tlast_gen = !concat_keep_shift[DATA_BYTE_WD-1];
-        end else if(tail_valid && m_axis_tready) begin
+        end else if(tail_valid_reg && m_axis_tready) begin
             tlast_gen = !concat_keep_shift[DATA_BYTE_WD-1];
         end else begin
             tlast_gen = 1'b0;
@@ -195,9 +192,9 @@ module DataInserterStream #(
     // header : buffer 为空 或者 本次传输结束
     assign s00_axis_tready  = !header_valid_reg | (m_axis_tready && m_axis_tlast);
 
-    // data   : buffer 为空 或者 最后一排 或者 当拍将要输出本次传输的DATA时  !last_sv 是防止下次传输的数据被送入
+    // data   : buffer 为空 或者 最后一排 或者 当拍将要输出本次传输的DATA时  !last_sv_reg 是防止下次传输的数据被送入
     // assign s01_axis_tready  = !data_valid_reg   | (m_axis_tready && m_axis_tlast); 
-    assign s01_axis_tready  = !data_valid_reg  | (m_axis_tready && m_axis_tlast) | (m_axis_tready && m_axis_tvalid && !last_sv) ;
+    assign s01_axis_tready  = !data_valid_reg  | (m_axis_tready && m_axis_tlast) | (m_axis_tready && m_axis_tvalid && !last_sv_reg) ;
     // data_valid_reg 中有数据并不代表一定会输出，可能输出的是head?可能是下次传输提前进buffer的数据，不能输出
 
     assign m_axis_tdata  = concat_data_shift[2*DATA_WD-1      :      DATA_WD];

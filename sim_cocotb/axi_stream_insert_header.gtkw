@@ -1,111 +1,72 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Aug 25 05:12:12 2023
+[*] Sun Aug 27 16:39:32 2023
 [*]
-[dumpfile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
-[dumpfile_mtime] "Fri Aug 25 05:03:13 2023"
-[dumpfile_size] 104167
-[savefile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
-[timestart] 78200
-[size] 1428 819
-[pos] 458844 424485
-*-14.666153 114300 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/home/anne/work/Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
+[dumpfile_mtime] "Sun Aug 27 16:38:10 2023"
+[dumpfile_size] 7531
+[savefile] "/home/anne/work/Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
+[timestart] 878600
+[size] 1428 924
+[pos] 457695 427690
+*-14.666153 934100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] axi_stream_insert_header.
-[sst_width] 264
+[treeopen] axi_stream_insert_header.u_mkDataInserterStream.
+[sst_width] 352
 [signals_width] 270
 [sst_expanded] 1
-[sst_vpaned_height] 225
+[sst_vpaned_height] 261
 @28
 axi_stream_insert_header.clk
 axi_stream_insert_header.rst
 @200
 -
 @28
-axi_stream_insert_header.u_DI.send_header
+axi_stream_insert_header.u_mkDataInserterStream.headSendReg
 @200
 -
 @28
-axi_stream_insert_header.u_DI.s00_axis_tvalid
-axi_stream_insert_header.u_DI.s00_axis_tready
-axi_stream_insert_header.u_DI.s00_axis_tkeep[3:0]
+axi_stream_insert_header.u_mkDataInserterStream.s00_axis_tready
+axi_stream_insert_header.u_mkDataInserterStream.s00_axis_tvalid
+axi_stream_insert_header.u_mkDataInserterStream.s00_axis_tkeep[3:0]
 @22
-axi_stream_insert_header.u_DI.s00_axis_tdata[31:0]
+axi_stream_insert_header.u_mkDataInserterStream.s00_axis_tdata[31:0]
 @200
 -
 @28
-axi_stream_insert_header.u_DI.s01_axis_tvalid
-axi_stream_insert_header.u_DI.s01_axis_tready
-axi_stream_insert_header.u_DI.s01_axis_tlast
-axi_stream_insert_header.u_DI.s01_axis_tkeep[3:0]
+axi_stream_insert_header.u_mkDataInserterStream.s01_axis_tready
+axi_stream_insert_header.u_mkDataInserterStream.s01_axis_tvalid
+axi_stream_insert_header.u_mkDataInserterStream.s01_axis_tkeep[3:0]
 @22
-axi_stream_insert_header.u_DI.s01_axis_tdata[31:0]
+axi_stream_insert_header.u_mkDataInserterStream.s01_axis_tdata[31:0]
+@28
+axi_stream_insert_header.u_mkDataInserterStream.s01_axis_tlast
 @200
 -
+-
 @28
-axi_stream_insert_header.u_DI.m_axis_tready
-axi_stream_insert_header.u_DI.m_axis_tvalid
-axi_stream_insert_header.u_DI.m_axis_tlast
-axi_stream_insert_header.u_DI.m_axis_tkeep[3:0]
+axi_stream_insert_header.u_mkDataInserterStream.m_axis_tready
+axi_stream_insert_header.u_mkDataInserterStream.m_axis_tvalid
+axi_stream_insert_header.u_mkDataInserterStream.m_axis_tkeep[3:0]
+axi_stream_insert_header.u_mkDataInserterStream.m_axis_tlast
 @22
-axi_stream_insert_header.u_DI.m_axis_tdata[31:0]
+axi_stream_insert_header.u_mkDataInserterStream.m_axis_tdata[31:0]
 @200
 -
-@28
-axi_stream_insert_header.u_DI.last_sv
+-
+@22
+axi_stream_insert_header.u_mkDataInserterStream.resDataReg_ehrReg[31:0]
+axi_stream_insert_header.u_mkDataInserterStream.resKeepReg_ehrReg[3:0]
+@200
+-
+@22
+axi_stream_insert_header.u_mkDataInserterStream.dataDataReg_ehrReg[31:0]
+axi_stream_insert_header.u_mkDataInserterStream.dataKeepReg_ehrReg[3:0]
+@200
+-
 @29
-axi_stream_insert_header.u_DI.m_axis_tready
+axi_stream_insert_header.u_mkDataInserterStream.tlastReg_ehrReg
 @200
--
-@28
-axi_stream_insert_header.clk
-@200
--
-@28
-axi_stream_insert_header.u_DI.header_valid_reg
-axi_stream_insert_header.u_DI.header_keep_reg[3:0]
-@22
-axi_stream_insert_header.u_DI.header_data_reg[31:0]
-@200
--
-@28
-axi_stream_insert_header.u_DI.data_valid_reg
-axi_stream_insert_header.u_DI.data_last_reg
-axi_stream_insert_header.u_DI.data_keep_reg[3:0]
-@22
-axi_stream_insert_header.u_DI.data_data_reg[31:0]
-@200
--
-@28
-axi_stream_insert_header.u_DI.res_valid_reg
-@22
-axi_stream_insert_header.u_DI.res_data_reg[31:0]
-axi_stream_insert_header.u_DI.res_data_shift[31:0]
-@28
-axi_stream_insert_header.u_DI.res_keep_reg[3:0]
-axi_stream_insert_header.u_DI.res_keep_shift[3:0]
-@200
--
-@22
-axi_stream_insert_header.u_DI.concat_data[63:0]
-axi_stream_insert_header.u_DI.concat_data_shift[63:0]
-@28
-axi_stream_insert_header.u_DI.concat_keep[7:0]
-axi_stream_insert_header.u_DI.concat_keep_shift[7:0]
-@200
--
-@28
-axi_stream_insert_header.u_DI.m_axis_tready
-axi_stream_insert_header.u_DI.m_axis_tvalid
-axi_stream_insert_header.u_DI.m_axis_tlast
-axi_stream_insert_header.u_DI.m_axis_tkeep[3:0]
-@22
-axi_stream_insert_header.u_DI.m_axis_tdata[31:0]
-@200
--
-@28
-axi_stream_insert_header.u_DI.tail_valid
-@200
--
 -
 -
 -

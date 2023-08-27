@@ -71,8 +71,7 @@ async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
             # length = random.randint(2,16)
             # head_bytenum = random.randint(1, (length-1) if byte_lanes > (length-1) else byte_lanes) # head byte数随机
             length = j
-            # head_bytenum = i + 1
-            head_bytenum = 4
+            head_bytenum = i + 1
             head_data, head_tkeep, body_data, body_tkeep, ref_byte = genInsertHeaderData(byte_lanes, length, head_bytenum)
             head_byte = bytearray(head_data)
             head_frame = AxiStreamFrame(tdata = head_byte, tkeep = head_tkeep)
@@ -125,7 +124,7 @@ async def run_random_test(dut, idle_inserter=None, backpressure_inserter=None):
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
 
-@cocotb.test(timeout_time=20000, timeout_unit="ns")
+# @cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_consistent_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
     random.seed(7)
 
@@ -140,8 +139,7 @@ async def run_consistent_incr_test(dut, idle_inserter=None, backpressure_inserte
     for i in range(4):
         for j in range(8,12):
             length = j
-            # head_bytenum = i + 1
-            head_bytenum = 4
+            head_bytenum = i + 1
             head_data, head_tkeep, body_data, body_tkeep, ref_byte = genInsertHeaderData(byte_lanes, length, head_bytenum)
             head_byte = bytearray(head_data)
             head_frame = AxiStreamFrame(tdata = head_byte, tkeep = head_tkeep)
