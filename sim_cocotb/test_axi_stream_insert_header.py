@@ -71,8 +71,8 @@ async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
             # length = random.randint(2,16)
             # head_bytenum = random.randint(1, (length-1) if byte_lanes > (length-1) else byte_lanes) # head byte数随机
             length = j
-            # head_bytenum = i + 1
-            head_bytenum = 3
+            head_bytenum = i + 1
+            # head_bytenum = 3
             head_data, head_tkeep, body_data, body_tkeep, ref_byte = genInsertHeaderData(byte_lanes, length, head_bytenum)
             head_byte = bytearray(head_data)
             head_frame = AxiStreamFrame(tdata = head_byte, tkeep = head_tkeep)
@@ -140,8 +140,8 @@ async def run_consistent_incr_test(dut, idle_inserter=None, backpressure_inserte
     for i in range(4):
         for j in range(8,12):
             length = j
-            # head_bytenum = i + 1
-            head_bytenum = 4
+            head_bytenum = i + 1
+            # head_bytenum = 4
             head_data, head_tkeep, body_data, body_tkeep, ref_byte = genInsertHeaderData(byte_lanes, length, head_bytenum)
             head_byte = bytearray(head_data)
             head_frame = AxiStreamFrame(tdata = head_byte, tkeep = head_tkeep)
@@ -207,24 +207,24 @@ def cycle_pause():
 
 # 自增测试,遍历所有head和data的长度组合情况
 factory = TestFactory(run_incr_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
 factory.generate_tests()
 
-# # # 随机测试
-# factory = TestFactory(run_random_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
-# factory.generate_tests()
+# # 随机测试
+factory = TestFactory(run_random_test)
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.generate_tests()
 
-# # 紧凑自增数据测试
-# factory = TestFactory(run_consistent_incr_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
-# factory.generate_tests()
+# 紧凑自增数据测试
+factory = TestFactory(run_consistent_incr_test)
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.generate_tests()
 
-# # 紧凑随机数据测试
-# factory = TestFactory(run_consistent_random_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
-# factory.generate_tests()
+# 紧凑随机数据测试
+factory = TestFactory(run_consistent_random_test)
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.generate_tests()

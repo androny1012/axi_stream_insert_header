@@ -1,28 +1,28 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Aug 28 03:14:24 2023
+[*] Mon Aug 28 08:18:14 2023
 [*]
-[dumpfile] "/home/anne/work/Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
-[dumpfile_mtime] "Mon Aug 28 03:06:46 2023"
-[dumpfile_size] 6237
-[savefile] "/home/anne/work/Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
-[timestart] 0
-[size] 1908 997
-[pos] 490239 460459
-*-14.604149 94100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
+[dumpfile_mtime] "Mon Aug 28 08:17:49 2023"
+[dumpfile_size] 23514
+[savefile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
+[timestart] 862400
+[size] 1908 1013
+[pos] 616381 532635
+*-14.604149 943500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] axi_stream_insert_header.
 [treeopen] axi_stream_insert_header.u_mkDataInserterStream.
 [sst_width] 352
 [signals_width] 270
 [sst_expanded] 1
-[sst_vpaned_height] 286
+[sst_vpaned_height] 299
 @28
 axi_stream_insert_header.clk
 axi_stream_insert_header.rst
 @200
 -
 @28
-axi_stream_insert_header.u_mkDataInserterStream.headSendReg
+axi_stream_insert_header.u_mkDataInserterStream.headSendReg_ehrReg
 @200
 -
 @28
@@ -47,29 +47,29 @@ axi_stream_insert_header.u_mkDataInserterStream.s01_axis_tlast
 @28
 axi_stream_insert_header.u_mkDataInserterStream.m_axis_tready
 axi_stream_insert_header.u_mkDataInserterStream.m_axis_tvalid
-@29
 axi_stream_insert_header.u_mkDataInserterStream.m_axis_tkeep[3:0]
-@28
 axi_stream_insert_header.u_mkDataInserterStream.m_axis_tlast
 @22
 axi_stream_insert_header.u_mkDataInserterStream.m_axis_tdata[31:0]
 @200
 -
--
+@28
+axi_stream_insert_header.u_mkDataInserterStream.resKeepReg_ehrReg[3:0]
 @22
 axi_stream_insert_header.u_mkDataInserterStream.resDataReg_ehrReg[31:0]
 @28
-axi_stream_insert_header.u_mkDataInserterStream.resKeepReg_ehrReg[3:0]
-@200
--
-@22
-axi_stream_insert_header.u_mkDataInserterStream.dataDataReg_ehrReg[31:0]
-axi_stream_insert_header.u_mkDataInserterStream.dataKeepReg_ehrReg[3:0]
+axi_stream_insert_header.u_mkDataInserterStream.resLastReg_ehrReg
 @200
 -
 @28
-axi_stream_insert_header.u_mkDataInserterStream.tlastReg_ehrReg
+axi_stream_insert_header.u_mkDataInserterStream.dataKeepReg_ehrReg[3:0]
+@22
+axi_stream_insert_header.u_mkDataInserterStream.dataDataReg_ehrReg[31:0]
+@28
+axi_stream_insert_header.u_mkDataInserterStream.dataLastReg_ehrReg
 @200
+-
+-
 -
 -
 -
