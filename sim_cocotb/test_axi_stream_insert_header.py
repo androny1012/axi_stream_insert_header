@@ -72,7 +72,7 @@ async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
             # head_bytenum = random.randint(1, (length-1) if byte_lanes > (length-1) else byte_lanes) # head byte数随机
             length = j
             # head_bytenum = i + 1
-            head_bytenum = 4
+            head_bytenum = 3
             head_data, head_tkeep, body_data, body_tkeep, ref_byte = genInsertHeaderData(byte_lanes, length, head_bytenum)
             head_byte = bytearray(head_data)
             head_frame = AxiStreamFrame(tdata = head_byte, tkeep = head_tkeep)
