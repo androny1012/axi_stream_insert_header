@@ -91,7 +91,7 @@ async def run_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
 
-# @cocotb.test(timeout_time=20000, timeout_unit="ns")
+@cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_random_test(dut, idle_inserter=None, backpressure_inserter=None):
     random.seed(7)
 
@@ -124,7 +124,7 @@ async def run_random_test(dut, idle_inserter=None, backpressure_inserter=None):
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
 
-# @cocotb.test(timeout_time=20000, timeout_unit="ns")
+@cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_consistent_incr_test(dut, idle_inserter=None, backpressure_inserter=None):
     random.seed(7)
 
@@ -161,7 +161,7 @@ async def run_consistent_incr_test(dut, idle_inserter=None, backpressure_inserte
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
 
-# @cocotb.test(timeout_time=20000, timeout_unit="ns")
+@cocotb.test(timeout_time=20000, timeout_unit="ns")
 async def run_consistent_random_test(dut, idle_inserter=None, backpressure_inserter=None):
     random.seed(7)
 
@@ -205,24 +205,24 @@ def cycle_pause():
 
 # 自增测试,遍历所有head和data的长度组合情况
 factory = TestFactory(run_incr_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
 factory.generate_tests()
 
-# # # 随机测试
-# factory = TestFactory(run_random_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
-# factory.generate_tests()
+# # 随机测试
+factory = TestFactory(run_random_test)
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.generate_tests()
 
-# # 紧凑自增数据测试
-# factory = TestFactory(run_consistent_incr_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
-# factory.generate_tests()
+# 紧凑自增数据测试
+factory = TestFactory(run_consistent_incr_test)
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.generate_tests()
 
-# # 紧凑随机数据测试
-# factory = TestFactory(run_consistent_random_test)
-# factory.add_option("idle_inserter", [None, cycle_pause])
-# factory.add_option("backpressure_inserter", [None, cycle_pause])
-# factory.generate_tests()
+# 紧凑随机数据测试
+factory = TestFactory(run_consistent_random_test)
+factory.add_option("idle_inserter", [None, cycle_pause])
+factory.add_option("backpressure_inserter", [None, cycle_pause])
+factory.generate_tests()

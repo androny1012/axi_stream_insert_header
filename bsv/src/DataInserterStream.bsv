@@ -26,7 +26,19 @@ function UInt#(8) shitfCnt(Bit#(4) din);
           len = len + 1;
     
     return len;
- endfunction
+endfunction
+
+function Tuple2#(Bit#(32), Bit#(4)) rmZero(Bit#(32) data,Bit#(4) keep);
+
+    for(UInt#(3) i=0; i<4; i=i+1)
+        if(keep[3] == 0) begin
+            data = data << 8;
+            keep = keep << 1;
+        end
+    
+    return tuple2( data,keep );
+endfunction
+
 
 interface DataInserterIFC#(numeric type keepWidth, numeric type usrWidth);
     (* prefix = "s00_axis" *) interface RawAxiStreamSlave #(keepWidth, usrWidth) headStreamIn ;
@@ -40,137 +52,120 @@ module mkDataInserterStream(DataInserterIFC#(AXIS_TKEEP_WIDTH, AXIS_TUSER_WIDTH)
     Integer dataInFifoDepth  = valueOf(DATAIN_FIFO_DEPTH);
     Integer dataOutFifoDepth = valueOf(DATAOUT_FIFO_DEPTH);
 
-    FIFOF#(AxiStream32) headFifo <- mkSizedFIFOF(headFifoDepth);
-    // FIFOF#(AxiStream32) dataInFifo <- mkSizedFIFOF(dataInFifoDepth);
-    // FIFOF#(AxiStream32) dataOutFifo <- mkSizedFIFOF(dataOutFifoDepth);
+    // FIFOF#(AxiStream32) headFifo <- mkSizedFIFOF(headFifoDepth+1);
+    // FIFOF#(AxiStream32) dataInFifo <- mkSizedFIFOF(dataInFifoDepth+1);
+    FIFOF#(AxiStream32) dataOutFifo <- mkSizedFIFOF(dataOutFifoDepth+1);
 
-    // FIFOF#(AxiStream32) headFifo <- mkSizedBypassFIFOF(headFifoDepth);
+    FIFOF#(AxiStream32) headFifo <- mkSizedBypassFIFOF(headFifoDepth);
     FIFOF#(AxiStream32) dataInFifo <- mkSizedBypassFIFOF(dataInFifoDepth);
-    FIFOF#(AxiStream32) dataOutFifo <- mkSizedBypassFIFOF(dataOutFifoDepth);
+    // FIFOF#(AxiStream32) dataOutFifo <- mkSizedBypassFIFOF(dataOutFifoDepth);
 
     let rawAxiSlaveHead  <- mkPipeInToRawAxiStreamSlave(convertFifoToPipeIn(headFifo));
     let rawAxiSlaveData  <- mkPipeInToRawAxiStreamSlave(convertFifoToPipeIn(dataInFifo));
     let rawAxiMasterData <- mkPipeOutToRawAxiStreamMaster(convertFifoToPipeOut(dataOutFifo));
     
-    Ehr#(2, Bool) headSendReg <- mkEhr(True);
+    Reg#(Bool)                      headSendReg    <- mkReg(True);
+    Reg#(Bit#(AXIS_TDATA_WIDTH))    resDataReg     <- mkReg(0);
+    Reg#(Bit#(AXIS_TKEEP_WIDTH))    resKeepReg     <- mkReg(0);
+    Reg#(Bool)                      tailValidReg   <- mkReg(False);
 
-    // Ehr#(3, Bit#(TMul#(AXIS_TDATA_WIDTH, 2))) concatDataReg     <- mkEhr(0);
-    // Ehr#(3, Bit#(TMul#(AXIS_TKEEP_WIDTH, 2))) concatKeepReg     <- mkEhr(0);
-    Ehr#(2, Bit#(AXIS_TDATA_WIDTH)) resDataReg     <- mkEhr(0);
-    Ehr#(2, Bit#(AXIS_TKEEP_WIDTH)) resKeepReg     <- mkEhr(0);
-    Ehr#(2, Bool)                   resLastReg     <- mkEhr(False);
-    Ehr#(2, Bit#(AXIS_TDATA_WIDTH)) dataDataReg    <- mkEhr(0);
-    Ehr#(2, Bit#(AXIS_TKEEP_WIDTH)) dataKeepReg    <- mkEhr(0);
-    Ehr#(2, Bool)                   dataLastReg    <- mkEhr(False);
-    Ehr#(2, UInt#(8))               cntLastReg     <- mkEhr(0);
+    rule getHead;
+        if (headSendReg) begin
+            if (headFifo.notEmpty) begin
+                let rxHead = headFifo.first;
+                headFifo.deq();
 
-    // Reg#(Bit#(TMul#(AXIS_TDATA_WIDTH, 2))) concatDataReg <- mkReg(0);
-    // Reg#(Bit#(TMul#(AXIS_TKEEP_WIDTH, 2))) concatKeepReg <- mkReg(0);
+                let headData = rxHead.tData;
+                let headKeep = rxHead.tKeep;
+                let headKeepCnt = shitfCnt(headKeep);
 
-    // Reg#(Bool) tlastReg <- mkReg(False);
-    
+                if (headKeep[3] == 1'b1) begin
+                    let streamOut = AxiStream32{     
+                        tData: headData,
+                        tKeep: headKeep,
+                        tLast: False
+                    };
+                    dataOutFifo.enq( streamOut );
+                    resDataReg <= 32'b0;
+                    resKeepReg <= 4'b0;
+                    
+                    headSendReg <= False;
+                end 
+                else if (dataInFifo.notEmpty) begin
+                    let rxData = dataInFifo.first;
+                    dataInFifo.deq;
 
-    Ehr#(2, UInt#(8)) shitfCntReg <- mkEhr(0);
-    
-    rule getHead if (headSendReg[0] == True);
-        let rxHead = headFifo.first;
-        headFifo.deq();
+                    let dataData = rxData.tData;
+                    let dataKeep = rxData.tKeep;
+                    let dataKeepCnt = shitfCnt(dataKeep);
+                    let dataLast = rxData.tLast;
+                    if (dataLast) begin
+                        if ((dataKeepCnt + headKeepCnt) > 4) begin
+                            dataLast = False;
+                            tailValidReg <= True;
+                        end
+                    end
 
-        resDataReg[0] <= rxHead.tData;
-        resKeepReg[0] <= rxHead.tKeep;
-        resLastReg[0] <= False;
-        shitfCntReg[0] <= shitfCnt(rxHead.tKeep);
-        headSendReg[0] <= False;
+                    let streamOut = AxiStream32{     
+                        tData: truncate({headData,dataData} >> (headKeepCnt<<3)),
+                        tKeep: truncate({headKeep,dataKeep} >>  headKeepCnt),
+                        tLast: dataLast
+                    };
+                    dataOutFifo.enq(streamOut);
 
-    endrule
+                    resDataReg <= dataData;
+                    resKeepReg <= dataKeep & headKeep;
 
-    rule getDataIn if (headSendReg[1] == False && dataKeepReg[0][3] == 1'b0 && !resLastReg[0]);
-        let rxData = dataInFifo.first;
-        dataInFifo.deq();
-
-        dataDataReg[0] <= rxData.tData;
-        dataKeepReg[0] <= rxData.tKeep;
-        dataLastReg[0] <= rxData.tLast;
-        cntLastReg[0]  <= shitfCnt(rxData.tKeep);
-
-    endrule
-
-    rule putDataOut if (headSendReg[1] == False && (resKeepReg[1][3] == 1'b1 || dataKeepReg[1][3] == 1'b1 || resLastReg[1]));
-
-        // Bool tail_valid;
-        Bit#(AXIS_TDATA_WIDTH) dataOut;
-        Bit#(AXIS_TKEEP_WIDTH) keepOut;
-        Bool                   lastOut;
-        if(resKeepReg[1][3] == 1'b1) begin
-            resDataReg[1] <= dataDataReg[1];
-            resKeepReg[1] <= dataKeepReg[1];
-            resLastReg[1] <= dataLastReg[1];
-
-            if(!resLastReg[1]) begin
-                dataDataReg[1] <= 32'b0;
-                dataKeepReg[1] <=  4'b0;
-                dataLastReg[1] <= False;
+                    headSendReg <= dataLast;
+                end
+                else begin
+                    resDataReg <= headData;
+                    resKeepReg <= headKeep;
+                    headSendReg <= False;
+                end 
             end
-            dataOut = resDataReg[1];
-            keepOut = resKeepReg[1];
-            lastOut = resLastReg[1];
-        end else if(resKeepReg[1][0] == 1'b1) begin
-  
-            resDataReg[1] <= dataDataReg[1];
-            resKeepReg[1] <= dataKeepReg[1] & resKeepReg[1];
-            resLastReg[1] <= dataLastReg[1];
-
-            if(!resLastReg[1]) begin
-                dataDataReg[1] <= 32'b0;
-                dataKeepReg[1] <=  4'b0;
-            end
-
-
-            // lastOut = tailType ? resLastReg[1] : dataLastReg[1];
-            // let tailData = lastOut ? 32'b0 : dataDataReg[1];
-            // let tailKeep = lastOut ?  4'b0 : dataKeepReg[1];
-            // dataOut = truncate({resDataReg[1],tailData} >> shitfCntReg[1]*8);
-            // keepOut = truncate({resKeepReg[1],tailKeep} >> shitfCntReg[1])  ;
-
-            let tailType = (shitfCntReg[1] + cntLastReg[1] > 4);
-            dataOut = truncate({resDataReg[1],dataDataReg[1]} >> shitfCntReg[1]*8);
-            keepOut = truncate({resKeepReg[1],dataKeepReg[1]} >> shitfCntReg[1]);
-            lastOut = tailType ? resLastReg[1] : dataLastReg[1];
-
-            
-            if(lastOut) begin
-                dataLastReg[1] <= False;
-            end else begin
-                dataLastReg[1] <= resLastReg[1];
-            end
-
         end else begin
-            resDataReg[1] <= dataDataReg[1];
-            resKeepReg[1] <= dataKeepReg[1];
-            resLastReg[1] <= dataLastReg[1];
+            if (tailValidReg) begin
+                let streamOut = AxiStream32{
+                    tData: resDataReg,
+                    tKeep: resKeepReg,
+                    tLast: True
+                };
 
-            if(!resLastReg[1]) begin
-                dataDataReg[1] <= 32'b0;
-                dataKeepReg[1] <=  4'b0;
-                dataLastReg[1] <= False;
+                dataOutFifo.enq(streamOut);
+                headSendReg <= True;
+                tailValidReg <= False;
             end
-            // tail_valid = True;
-            dataOut = resDataReg[1];
-            keepOut = resKeepReg[1];
-            lastOut = resLastReg[1];
-        end
+            else if (dataInFifo.notEmpty) begin
+                let rxData = dataInFifo.first;
+                dataInFifo.deq;   
 
-        let streamOut = AxiStream32{     
-            tData: dataOut,
-            tKeep: keepOut,
-            tLast: lastOut
-        };
+                let dataData = rxData.tData;
+                let dataKeep = rxData.tKeep;
+                let dataKeepCnt = shitfCnt(dataKeep);
+                let headKeepCnt = shitfCnt(resKeepReg);
+                
+                let dataLast = rxData.tLast;
+                if (dataLast) begin
+                    if ((dataKeepCnt + headKeepCnt) > 4) begin
+                        dataLast = False;
+                        tailValidReg <= True;
+                    end
+                end
 
-        if(lastOut) begin
-            // resLastReg[1] <= False;
-            headSendReg[1] <= True;
+                let streamOut = AxiStream32{     
+                    tData: truncate({resDataReg,dataData} >> (headKeepCnt<<3)),
+                    tKeep: truncate({resKeepReg,dataKeep} >>  headKeepCnt),
+                    tLast: dataLast
+                };
+                dataOutFifo.enq(streamOut);
+
+                resDataReg <= dataData;
+                resKeepReg <= dataKeep & resKeepReg;
+                
+                headSendReg <= dataLast; 
+            end
         end
-        dataOutFifo.enq( streamOut );
 
     endrule
 

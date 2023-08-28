@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Aug 28 08:18:14 2023
+[*] Mon Aug 28 15:01:50 2023
 [*]
-[dumpfile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
-[dumpfile_mtime] "Mon Aug 28 08:17:49 2023"
-[dumpfile_size] 23514
-[savefile] "/home/anne/work/1_IC/2_Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
-[timestart] 862400
+[dumpfile] "/home/anne/work/Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.fst"
+[dumpfile_mtime] "Mon Aug 28 14:59:59 2023"
+[dumpfile_size] 12435
+[savefile] "/home/anne/work/Lib/axi_stream_insert_header/sim_cocotb/axi_stream_insert_header.gtkw"
+[timestart] 3504300
 [size] 1908 1013
-[pos] 616381 532635
-*-14.604149 943500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 649117 565371
+*-14.604149 3534900 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] axi_stream_insert_header.
 [treeopen] axi_stream_insert_header.u_mkDataInserterStream.
 [sst_width] 352
@@ -22,7 +22,7 @@ axi_stream_insert_header.rst
 @200
 -
 @28
-axi_stream_insert_header.u_mkDataInserterStream.headSendReg_ehrReg
+axi_stream_insert_header.u_mkDataInserterStream.headSendReg
 @200
 -
 @28
@@ -54,20 +54,15 @@ axi_stream_insert_header.u_mkDataInserterStream.m_axis_tdata[31:0]
 @200
 -
 @28
-axi_stream_insert_header.u_mkDataInserterStream.resKeepReg_ehrReg[3:0]
+axi_stream_insert_header.u_mkDataInserterStream.resKeepReg[3:0]
 @22
-axi_stream_insert_header.u_mkDataInserterStream.resDataReg_ehrReg[31:0]
+axi_stream_insert_header.u_mkDataInserterStream.resDataReg[31:0]
 @28
-axi_stream_insert_header.u_mkDataInserterStream.resLastReg_ehrReg
+>5003
+axi_stream_insert_header.u_mkDataInserterStream.resLastReg
 @200
+>0
 -
-@28
-axi_stream_insert_header.u_mkDataInserterStream.dataKeepReg_ehrReg[3:0]
-@22
-axi_stream_insert_header.u_mkDataInserterStream.dataDataReg_ehrReg[31:0]
-@28
-axi_stream_insert_header.u_mkDataInserterStream.dataLastReg_ehrReg
-@200
 -
 -
 -

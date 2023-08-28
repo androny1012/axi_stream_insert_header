@@ -1,5 +1,17 @@
 # axi_stream_insert_header
 
+## RUN
+
+### Verilog Version
+   cd ./sim_cocotb_rtl
+   make
+
+### BSV Version
+   cd ./bsv/src
+   make
+   cd ./sim_cocotb
+   make
+
 ## 思路
     有几个关键的状态需要用reg保存
     1、本次传输是否已经发了header，否则是无法开始传输的

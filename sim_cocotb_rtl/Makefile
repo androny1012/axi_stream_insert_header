@@ -31,9 +31,9 @@ DUT      = axi_stream_insert_header
 TOPLEVEL = $(DUT)
 MODULE   = test_$(DUT)
 # VERILOG_SOURCES += ./rtl/$(DUT).v
-# VERILOG_SOURCES += ../rtl/*.v
-VERILOG_SOURCES += ../bsv/src/generated/*.v
-VERILOG_SOURCES += ../bsv/src/axi_stream_insert_header.v
+VERILOG_SOURCES += ../rtl/*.v
+# VERILOG_SOURCES += ../bsv/src/generated/*.v
+# VERILOG_SOURCES += ../bsv/src/axi_stream_insert_header.v
 
 export PYTHONPATH := $(PWD)/../model:$(PYTHONPATH)
 
